@@ -1,0 +1,51 @@
+@model IEnumerable<Booking>
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Bookings</h1>
+    <a asp-action="Create" class="btn btn-primary">+ Add Booking</a>
+</div>
+
+<form asp-action="Index" method="get" class="mb-4 d-flex">
+    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]"
+           class="form-control me-2" placeholder="Search by venue, event, or customer..." />
+    <button type="submit" class="btn btn-outline-secondary">Search</button>
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No bookings found.</p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Reference</th>
+            <th>Venue</th>
+            <th>Event</th>
+            <th>Customer</th>
+            <th>@Html.DisplayNameFor(m => m.BookingDate)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td><code>@booking.BookingReference</code></td>
+                <td>@booking.Venue?.VenueName</td>
+                <td>@booking.Event?.EventName</td>
+                <td>@(booking.Customer != null ? $"{booking.Customer.FirstName} {booking.Customer.LastName}" : "-")</td>
+                <td>@booking.BookingDate.ToString("g")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

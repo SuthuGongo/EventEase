@@ -1,0 +1,33 @@
+@model Event
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<h1>Event Details</h1>
+
+<img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "https://via.placeholder.com/400x250?text=No+Image" : Model.ImageUrl)"
+     class="img-fluid rounded mb-3" style="max-height:300px;" alt="@Model.EventName" />
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.EventName)</dt>
+    <dd class="col-sm-9">@Model.EventName</dd>
+
+    <dt class="col-sm-3">Event type</dt>
+    <dd class="col-sm-9">@(Model.EventType?.Name ?? "Unclassified")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.StartDateTime)</dt>
+    <dd class="col-sm-9">@Model.StartDateTime.ToString("g")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.EndDateTime)</dt>
+    <dd class="col-sm-9">@Model.EndDateTime.ToString("g")</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+
+    <dt class="col-sm-3">Venue</dt>
+    <dd class="col-sm-9">@(Model.Venue?.VenueName ?? "Not yet assigned")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.EventId" class="btn btn-secondary">Edit</a>
+<a asp-action="Index" class="btn btn-outline-secondary">Back to list</a>

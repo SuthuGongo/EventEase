@@ -1,0 +1,73 @@
+@model Booking
+
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h1>Edit Booking</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="BookingId" />
+
+            <div class="mb-3">
+                <label asp-for="EventId" class="form-label">Event</label>
+                <select asp-for="EventId" id="EventId" class="form-select" asp-items="ViewBag.EventId"></select>
+                <span asp-validation-for="EventId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="VenueId" class="form-label">Venue</label>
+                <select asp-for="VenueId" id="VenueId" class="form-select" asp-items="ViewBag.VenueId" disabled></select>
+                <!-- Disabled selects are not posted, so a hidden field carries the real value -->
+                <input type="hidden" id="VenueIdHidden" name="VenueId" value="@Model.VenueId" />
+                <span asp-validation-for="VenueId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CustomerId" class="form-label">Customer</label>
+                <select asp-for="CustomerId" class="form-select" asp-items="ViewBag.CustomerId">
+                    <option value="">-- Select a customer --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BookingDate" class="form-label"></label>
+                <input asp-for="BookingDate" class="form-control" type="datetime-local" />
+                <span asp-validation-for="BookingDate" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Maps EventId -> VenueId, supplied by BookingController.PopulateDropdowns
+        const eventVenueMap = @Html.Raw(ViewData["EventVenueMap"]);
+
+        const eventSelect = document.getElementById("EventId");
+        const venueSelect = document.getElementById("VenueId");
+        const venueHidden = document.getElementById("VenueIdHidden");
+
+        function syncVenueToEvent() {
+            const eventId = eventSelect.value;
+            const venueId = eventVenueMap[eventId];
+
+            if (venueId) {
+                venueSelect.value = venueId;
+                venueHidden.value = venueId;
+            } else {
+                venueSelect.value = "";
+                venueHidden.value = "";
+            }
+        }
+
+        eventSelect.addEventListener("change", syncVenueToEvent);
+
+        // Run once on load so the Venue field reflects the booking's current Event
+        syncVenueToEvent();
+    </script>
+}

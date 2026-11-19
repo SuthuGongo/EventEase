@@ -1,0 +1,153 @@
+@{
+    ViewData["Title"] = "Page not found";
+}
+
+<div class="notfound-wrap">
+    <div class="notfound-row">
+
+        <div class="notfound-image-col">
+            <!--
+                Your image lives at: wwwroot/images/AWW.png
+            -->
+            <img src="~/images/AWW.png" alt="A confused character" class="notfound-person" />
+        </div>
+
+        <div class="notfound-content-col">
+            <div class="notfound-digits" aria-hidden="true">404</div>
+            <div class="notfound-label">EventEase &middot; Error 404</div>
+            <h1 class="notfound-heading">This venue doesn't exist</h1>
+            <p class="notfound-copy">
+                The page you're looking for was cancelled, moved, or never booked in the first place.
+            </p>
+
+            <div class="notfound-actions">
+                <a asp-controller="Venue" asp-action="Index" class="notfound-btn-primary">Back to Venues</a>
+                <a href="javascript:history.back()" class="notfound-btn-link">Go back</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .notfound-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 180px);
+        padding: 1rem;
+    }
+
+    .notfound-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3rem;
+        max-width: 820px;
+        flex-wrap: wrap;
+        margin: 0 auto;
+    }
+
+    .notfound-image-col {
+        flex: 0 0 auto;
+    }
+
+    .notfound-person {
+        width: 170px;
+        height: auto;
+        display: block;
+        animation: notfound-bob 2.2s ease-in-out infinite;
+    }
+    @@keyframes notfound-bob {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-8px); }
+    }
+
+    .notfound-content-col {
+        flex: 1 1 320px;
+        max-width: 380px;
+        text-align: left;
+    }
+
+    .notfound-digits {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 800;
+        font-size: 96px;
+        color: #dbe0e6;
+        line-height: 1;
+        letter-spacing: -2px;
+        margin-bottom: 0.4rem;
+    }
+
+    .notfound-label {
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        color: #868e96;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .notfound-heading {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.9rem;
+        margin: 0.4rem 0 0.5rem;
+        color: #1a1d21;
+    }
+
+    .notfound-copy {
+        color: #6c757d;
+        margin: 0 0 1.4rem;
+    }
+
+    .notfound-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.1rem;
+    }
+
+    .notfound-btn-primary {
+        background: #0d6efd;
+        color: #fff;
+        border: none;
+        padding: 11px 24px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .notfound-btn-primary:hover {
+        background: #0b5ed7;
+        color: #fff;
+    }
+
+    .notfound-btn-link {
+        color: #495057;
+        text-decoration: underline;
+        font-size: 0.95rem;
+    }
+
+    /* Stack vertically and center text on narrow screens */
+    @@media (max-width: 640px) {
+        .notfound-row {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .notfound-content-col {
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .notfound-actions {
+            justify-content: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .notfound-person {
+            animation: none;
+        }
+    }
+</style>

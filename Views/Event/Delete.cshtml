@@ -1,0 +1,36 @@
+@model Event
+
+@{
+    ViewData["Title"] = "Delete Event";
+}
+
+<h1>Delete Event</h1>
+
+<div class="alert alert-warning">Are you sure you want to delete this event?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.EventName)</dt>
+    <dd class="col-sm-9">@Model.EventName</dd>
+
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.StartDateTime)</dt>
+    <dd class="col-sm-9">@Model.StartDateTime.ToString("g")</dd>
+
+    <dt class="col-sm-3">Venue</dt>
+    <dd class="col-sm-9">@(Model.Venue?.VenueName ?? "Not yet assigned")</dd>
+</dl>
+
+@if (Model.Bookings != null && Model.Bookings.Any())
+{
+    <div class="alert alert-danger">
+        This event has @Model.Bookings.Count() existing booking(s) and cannot be deleted.
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+}
+else
+{
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="EventId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+}

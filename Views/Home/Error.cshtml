@@ -1,0 +1,22 @@
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Something went wrong";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-5">Something went wrong</h1>
+    <p class="text-muted">
+        Sorry — an unexpected error occurred while processing your request.
+        Please try again, and if the problem continues, let the site administrator know.
+    </p>
+
+    @if (Model?.ShowRequestId == true)
+    {
+        <p class="text-muted">
+            <small>Request ID: <code>@Model.RequestId</code></small>
+        </p>
+    }
+
+    <a asp-controller="Venue" asp-action="Index" class="btn btn-primary mt-3">Back to Venues</a>
+</div>

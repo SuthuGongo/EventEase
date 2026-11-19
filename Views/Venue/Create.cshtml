@@ -1,0 +1,49 @@
+@model Venue
+
+@{
+    ViewData["Title"] = "Add Venue";
+}
+
+<h1>Add Venue</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="VenueName" class="form-label"></label>
+                <input asp-for="VenueName" class="form-control" />
+                <span asp-validation-for="VenueName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Capacity" class="form-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="imageFile" class="form-label">Venue Image</label>
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp" />
+                <div class="form-text">JPG, PNG, GIF, or WEBP. Max 5 MB.</div>
+            </div>
+
+            <div class="form-check form-switch mb-3">
+                <input asp-for="IsAvailable" class="form-check-input" role="switch" />
+                <label asp-for="IsAvailable" class="form-check-label"></label>
+                <div class="form-text">Switch off while the venue is closed (e.g. renovations) &mdash; it will be excluded from new bookings.</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

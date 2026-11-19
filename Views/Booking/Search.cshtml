@@ -1,0 +1,297 @@
+@model BookingSearchViewModel
+
+@{
+    ViewData["Title"] = "Find a Booking";
+    var availabilityOptions = new List<SelectListItem>
+    {
+        new SelectListItem("All venues", "", string.IsNullOrEmpty(Model.Availability)),
+        new SelectListItem("Available venues only", "available", Model.Availability == "available"),
+        new SelectListItem("Unavailable venues only", "unavailable", Model.Availability == "unavailable")
+    };
+}
+
+<div class="search-hero text-center">
+    <h1>Find a Booking</h1>
+    <p class="text-muted">Search by Booking ID, reference code, or Event Name &mdash; then narrow the results with the filters below</p>
+
+    <form asp-action="Search" method="get" class="mx-auto search-panel">
+        <div class="search-form mx-auto">
+            <div class="search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="SearchString" value="@Model.SearchString"
+                       placeholder="Try a Booking ID, reference code, or event name..." />
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+
+        @* Part 3, Section A - Advanced filters *@
+        <div class="filter-bar text-start">
+            <div class="filter-field">
+                <label asp-for="EventTypeId" class="form-label"><i class="bi bi-tags"></i> Event type</label>
+                <select asp-for="EventTypeId" asp-items="Model.EventTypes" class="form-select form-select-sm">
+                    <option value="">All event types</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label asp-for="StartDate" class="form-label"><i class="bi bi-calendar-range"></i> From</label>
+                <input asp-for="StartDate" type="date" class="form-control form-control-sm" />
+            </div>
+            <div class="filter-field">
+                <label asp-for="EndDate" class="form-label">To</label>
+                <input asp-for="EndDate" type="date" class="form-control form-control-sm" />
+            </div>
+            <div class="filter-field">
+                <label asp-for="Availability" class="form-label"><i class="bi bi-door-open"></i> Venue availability</label>
+                <select asp-for="Availability" asp-items="availabilityOptions" class="form-select form-select-sm"></select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-funnel"></i> Apply filters</button>
+                @if (Model.HasActiveFilters)
+                {
+                    <a asp-action="Search" class="btn btn-sm btn-link text-decoration-none">Clear all</a>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (ViewData["FilterError"] != null)
+{
+    <div class="alert alert-warning">@ViewData["FilterError"]</div>
+}
+
+<p class="results-summary text-muted">
+    Showing <strong>@Model.Results.Count</strong> of @Model.TotalBookings booking(s)@(Model.HasActiveFilters ? " matching your filters" : "").
+</p>
+
+@if (!Model.Results.Any())
+{
+    <div class="search-empty text-center text-muted">
+        <i class="bi bi-calendar-x"></i>
+        <p class="mt-2 mb-0">No bookings match your search and filters.</p>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var booking in Model.Results)
+        {
+            <div class="col">
+                <div class="booking-card h-100">
+                    <div class="booking-card-header">
+                        <span class="booking-badge-id">@booking.BookingReference</span>
+                        <span class="booking-badge-num">Booking #@booking.BookingId</span>
+                        <h5>@booking.EventName</h5>
+                        <span class="type-chip">@(booking.EventTypeName ?? "Unclassified")</span>
+                    </div>
+                    <div class="booking-card-body">
+                        <p><i class="bi bi-calendar-event"></i> @booking.StartDateTime.ToString("ddd, dd MMM yyyy \\a\\t HH:mm")</p>
+                        <p>
+                            <i class="bi bi-geo-alt"></i> @booking.VenueName &mdash; @booking.Location
+                            @if (booking.VenueIsAvailable)
+                            {
+                                <span class="badge rounded-pill text-bg-success ms-1">Available</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill text-bg-secondary ms-1">Unavailable</span>
+                            }
+                        </p>
+                        <p><i class="bi bi-people"></i> Capacity: @booking.Capacity.ToString("N0")</p>
+                        <p>
+                            <i class="bi bi-person"></i>
+                            @(!string.IsNullOrEmpty(booking.CustomerFirstName) ? $"{booking.CustomerFirstName} {booking.CustomerLastName}" : "Walk-in / unassigned")
+                        </p>
+                    </div>
+                    <div class="booking-card-footer">
+                        <a asp-controller="Booking" asp-action="Details" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-primary">Details</a>
+                        <a asp-controller="Booking" asp-action="Edit" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .search-hero {
+        padding: 2rem 1rem 2.5rem;
+    }
+
+    .search-hero h1 {
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 0.75rem;
+        max-width: 520px;
+        margin-top: 1.25rem;
+    }
+
+    .search-input-wrap {
+        position: relative;
+        flex: 1;
+    }
+
+    .search-input-wrap i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+    }
+
+    .search-input-wrap input {
+        width: 100%;
+        padding: 10px 14px 10px 40px;
+        border-radius: 999px;
+        border: 1px solid #dee2e6;
+        font-size: 0.95rem;
+    }
+
+    .search-input-wrap input:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+
+    .search-form button {
+        border-radius: 999px;
+        padding: 10px 26px;
+        font-weight: 600;
+    }
+
+    /* ---- Part 3: advanced filter bar ---- */
+    .search-panel {
+        max-width: 960px;
+    }
+
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1rem;
+        align-items: flex-end;
+        margin-top: 1.25rem;
+        padding: 1rem 1.15rem;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+    }
+
+    .filter-field {
+        flex: 1 1 170px;
+    }
+
+    .filter-field .form-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+    }
+
+    .results-summary {
+        font-size: 0.9rem;
+    }
+
+    .type-chip {
+        display: inline-block;
+        margin-top: 0.4rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: #fff;
+        color: #0d6efd;
+        padding: 1px 10px;
+        border-radius: 999px;
+    }
+
+    .search-empty {
+        padding: 3rem 1rem;
+    }
+
+    .search-empty i {
+        font-size: 2.5rem;
+        color: #ced4da;
+    }
+
+    .booking-card {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    .booking-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(13, 110, 253, 0.14);
+    }
+
+    .booking-card-header {
+        background: linear-gradient(135deg, #0d6efd, #4f8cff);
+        color: #fff;
+        padding: 1rem 1.15rem;
+    }
+
+    .booking-badge-id {
+        background: rgba(255, 255, 255, 0.22);
+        padding: 2px 11px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .booking-badge-num {
+        font-size: 0.72rem;
+        opacity: 0.85;
+        margin-left: 0.5rem;
+    }
+
+    .booking-card-header h5 {
+        margin: 0.5rem 0 0;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .booking-card-body {
+        padding: 1rem 1.15rem;
+        flex: 1;
+    }
+
+    .booking-card-body p {
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-size: 0.92rem;
+    }
+
+    .booking-card-body i {
+        width: 18px;
+        color: #0d6efd;
+        margin-right: 6px;
+    }
+
+    .booking-card-footer {
+        padding: 0.7rem 1.15rem;
+        border-top: 1px solid #f1f3f5;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    @@media (max-width: 480px) {
+        .search-form {
+            flex-direction: column;
+        }
+    }
+</style>

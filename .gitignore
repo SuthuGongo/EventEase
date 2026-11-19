@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+*.user
+*.pubxml
+*.pubxml.user
+Properties/PublishProfiles/
+appsettings.Development.json
+appsettings.*.local.json
+.env

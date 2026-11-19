@@ -1,0 +1,61 @@
+@model Event
+
+@{
+    ViewData["Title"] = "Add Event";
+}
+
+<h1>Add Event</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="EventName" class="form-label"></label>
+                <input asp-for="EventName" class="form-control" />
+                <span asp-validation-for="EventName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EventTypeId" class="form-label"></label>
+                <select asp-for="EventTypeId" class="form-select" asp-items="ViewBag.EventTypeId">
+                    <option value="">-- Select an event type --</option>
+                </select>
+                <span asp-validation-for="EventTypeId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="StartDateTime" class="form-label"></label>
+                <input asp-for="StartDateTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="StartDateTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EndDateTime" class="form-label"></label>
+                <input asp-for="EndDateTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="EndDateTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="imageFile" class="form-label">Event Image</label>
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp" />
+                <div class="form-text">JPG, PNG, GIF, or WEBP. Max 5 MB.</div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="VenueId" class="form-label">Venue (optional if not yet available)</label>
+                <select asp-for="VenueId" class="form-select" asp-items="ViewBag.VenueId">
+                    <option value="">-- Not yet assigned --</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
